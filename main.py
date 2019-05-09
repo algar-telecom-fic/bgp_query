@@ -11,7 +11,10 @@ def main():
   ips = read_json(config['ips_filepath'])
   credentials = read_json(config['credentials_filepath'])
   for ip in ips:
-    print(remote_access_run(ip, 'show bgp summary', credentials))
+    print('ip: ' + ip + ', hostname: ' + ips[ip])
+    for line in remote_access_run(ip, 'show bgp summary', credentials):
+      print('\t' + line.strip())
+    print()
 
 def multi_threaded_execution(jobs, workers = 256):
   ans = []
@@ -37,7 +40,7 @@ def remote_access_run(ip, command, credentials):
     '[Errno 104] Connection reset by peer',
   ]
   timeout = 32
-  remaining_attempts = 64
+  remaining_attempts = 32
   while remaining_attempts > 0:
     remaining_attempts -= 1
     with paramiko.SSHClient() as ssh:
