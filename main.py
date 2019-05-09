@@ -9,6 +9,8 @@ def main():
   config = read_json('config.json')
   ips = read_json(config['ips_filepath'])
   credentials = read_json(config['credentials_filepath'])
+  for ip in ips:
+    print(remote_access_run('show bgp summary', ip, credentials))
 
 def multi_threaded_execution(jobs, workers = 256):
   ans = []
