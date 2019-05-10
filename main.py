@@ -32,6 +32,8 @@ class User:
     results = multi_threaded_execution(jobs)
     for ip, result in zip(ips, results):
       print('ip: ' + ip + ', hostname: ' + ips[ip])
+      if result == None:
+        continue
       for line in result:
         print(line, end = '')
       print()
@@ -50,17 +52,16 @@ class User:
             banner_timeout = self.timeout,
             timeout = self.timeout,
           )
-          with ssh.exec_command(
+          stdin, stdout, stderr = ssh.exec_command(
             command,
             timeout = self.timeout,
-          ) as stdin, stdout, stderr:
-            ans = []
-            for line in stdout.readlines():
-              ans.append(line)
-            return ans
+          )
+          ans = []
+          for line in stdout.readlines():
+            ans.append(line)
+          return ans
         except Exception as exception:
           with lock:
-            print('eoqqq')
             allowed = False
             s = str(exception)
             print(ip, file = sys.stderr)
