@@ -6,15 +6,76 @@ import threading
 
 lock = threading.Lock()
 
+def User:
+  allowed_errors = [
+    '[Errno 104] Connection reset by peer',
+  ]
+  attempts = 32
+  timeout = 32
+
+  def __init__(self, filepath):
+    self.credentials = read_json(filepath)
+  
+  def get_peer(self, ip):
+    return self.remote_access_run(
+      ip,
+      'show bgp summary'
+    )
+    
+  def get_peers(self, ips):
+    jobs = []
+    for ip in ips:
+      jobs.append([
+        self.get_peer,
+        ip
+      ])
+    results = multi_threaded_execution(jobs)
+    for ip, result in zip(ips, results):
+      print('ip: ' + ip + ', hostname: ' + ips[ip])
+      for line in result:
+        print(line, end = '')
+      print()
+
+  def remote_access_run(self, ip, command):
+    for attempt in xrange(self.attempts)
+      with paramiko.SSHClient() as ssh:
+        try:
+          # paramiko.common.logging.basicConfig(level = paramiko.common.DEBUG)
+          ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+          ssh.connect(
+            ip,
+            username = self.credentials['username'],
+            password = self.credentials['password'],
+            auth_timeout = self.timeout,
+            banner_timeout = self.timeout,
+            timeout = self.timeout,
+          )
+          with ssh.exec_command(
+            command,
+            timeout = self.timeout,
+          ) as stdin, stdout, stderr:
+            ans = []
+            for line in stdout.readlines():
+              ans.append(line)
+            return ans
+        except Exception as exception:
+          with lock:
+            allowed = False
+            s = str(exception)
+            print(ip, file = sys.stderr)
+            print(exception, file = sys.stderr)
+            for error in self.allowed_errors:
+              if s.find(error) != -1:
+                allowed = True
+                break
+            if allowed == False:
+              return None
+
 def main():
   config = read_json('config.json')
   ips = read_json(config['ips_filepath'])
-  credentials = read_json(config['credentials_filepath'])
-  for ip in ips:
-    print('ip: ' + ip + ', hostname: ' + ips[ip])
-    for line in remote_access_run(ip, 'show bgp summary', credentials):
-      print('\t' + line.strip())
-    print()
+  user = User(config['credentials_filepath'])
+  user.get_peers(ips)
 
 def multi_threaded_execution(jobs, workers = 256):
   ans = []
@@ -34,46 +95,5 @@ def multi_threaded_execution(jobs, workers = 256):
 def read_json(filepath):
   with open(filepath, 'rb') as file:
     return json.load(file, encoding = 'utf-8')
-
-def remote_access_run(ip, command, credentials):
-  allowed_errors = [
-    '[Errno 104] Connection reset by peer',
-  ]
-  timeout = 32
-  remaining_attempts = 32
-  while remaining_attempts > 0:
-    remaining_attempts -= 1
-    with paramiko.SSHClient() as ssh:
-      try:
-        # paramiko.common.logging.basicConfig(level = paramiko.common.DEBUG)
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(
-          ip,
-          username = credentials['username'],
-          password = credentials['password'],
-          auth_timeout = timeout,
-          banner_timeout = timeout,
-          timeout = timeout,
-        )
-        stdin, stdout, stderr = ssh.exec_command(
-          command,
-          timeout = timeout
-        )
-        ans = []
-        for line in stdout.readlines():
-          ans.append(line)
-        return ans
-      except Exception as exception:
-        allowed = False
-        s = str(exception)
-        with lock:
-          print(ip, file = sys.stderr)
-          print(exception, file = sys.stderr)
-        for error in allowed_errors:
-          if s.find(error) != -1:
-            allowed = True
-            break
-        if allowed == False:
-          return None
 
 main()
