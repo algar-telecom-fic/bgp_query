@@ -41,6 +41,7 @@ class User:
       for line in result:
         v = line.strip().split(' ')
         if flag == True and len(v) > 0 and v[0][0].isdigit() == True:
+          print(v)
           ans[ip]['peers'].append({
             'peer': v[0],
             'status': v[8]
