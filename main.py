@@ -15,13 +15,13 @@ class User:
 
   def __init__(self, filepath):
     self.credentials = read_json(filepath)
-  
+
   def get_peer(self, ip):
     return self.remote_access_run(
       ip,
       'show bgp summary'
     )
-    
+
   def get_peers(self, ips):
     jobs = []
     for ip in ips:
@@ -60,6 +60,7 @@ class User:
             return ans
         except Exception as exception:
           with lock:
+            print('eoqqq')
             allowed = False
             s = str(exception)
             print(ip, file = sys.stderr)
