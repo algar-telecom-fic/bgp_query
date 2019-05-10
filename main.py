@@ -39,7 +39,7 @@ class User:
         continue
       flag = False
       for line in result:
-        v = line.strip().split(' ')
+        v = filter('', line.strip().split(' '))
         if flag == True and len(v) > 0 and v[0][0].isdigit() == True:
           print(v)
           ans[ip]['peers'].append({
