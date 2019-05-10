@@ -6,7 +6,7 @@ import threading
 
 lock = threading.Lock()
 
-def User:
+class User:
   allowed_errors = [
     '[Errno 104] Connection reset by peer',
   ]
