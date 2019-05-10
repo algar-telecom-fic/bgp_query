@@ -8,6 +8,9 @@ sys.path.append('/home/gardusi/github/sql_library/')
 from sql_json import mySQL
 
 date = datetime.datetime.now()
+current_filepath = os.path.realpath(
+  os.path.join(os.getcwd(), os.path.dirname(__file__))
+)
 lock = threading.Lock()
 
 class User:
@@ -142,7 +145,7 @@ def insert_documents(documents, database_credentials, database_name, table_name,
   )
 
 def main():
-  config = read_json('config.json')
+  config = read_json(current_filepath + 'config.json')
   ips = read_json(config['ips_filepath'])
   user = User(config['credentials_filepath'])
   ips = user.get_peers(ips)
@@ -150,7 +153,7 @@ def main():
   database_credentials = read_json(config['database_credentials_filepath'])
   database_name = config['database_name']
   table_name = config['table_name']
-  table_info = read_json('table_info.json')
+  table_info = read_json(current_filepath + 'table_info.json')
   insert_documents(documents, database_credentials, database_name, table_name, table_info)
 
 def multi_threaded_execution(jobs, workers = 256):
