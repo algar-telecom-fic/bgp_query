@@ -103,14 +103,49 @@ class User:
             if allowed == False:
               return None
 
+def build_database(ips):
+  documents = []
+  for ip in ips:
+    for peer in ips[ip]['peers']:
+      for route in ips[ip]['peers'][peer]['routes']:
+        documents.append({
+          'ip': ip,
+          'hostname': ips[ip]['hostname'],
+          'peer': peer,
+          'status': ips[ip]['peers'][peer]['status'],
+          'routing_table': route,
+          'active': ips[ip]['peers'][peer]['routes'][route]['active'],
+          'received': ips[ip]['peers'][peer]['routes'][route]['received'],
+          'accepted': ips[ip]['peers'][peer]['routes'][route]['accepted'],
+          'dump': ips[ip]['peers'][peer]['routes'][route]['dump'],
+        })
+  return documents
+
+def insert_documents(documents, database_credentials, database_name, table_name, table_info):
+  db = mySQL(
+    database_credentials = database_credentials,
+    database_name = database_name,
+  )
+  db.create_table(
+    table_info = table_info,
+    table_name = table_name,
+  )
+  db.insert_into(
+    table_info = table_info,
+    table_name = table_name,
+    values = documents,
+  )
+
 def main():
   config = read_json('config.json')
   ips = read_json(config['ips_filepath'])
   user = User(config['credentials_filepath'])
   ips = user.get_peers(ips)
-  for ip in ips:
-    print('ip: ' + ip + ', hostname: ' + ips[ip]['hostname'])
-    print('peers: ' + str(ips[ip]['peers']))
+  documents = build_documents(ips)
+  database_credentials = read_json(config['database_credentials_filepath'])
+  database_name = config['database_name']
+  table_name = config['table_name']
+  table_info = read_json['table_info.json']
 
 def multi_threaded_execution(jobs, workers = 256):
   ans = []

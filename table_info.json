@@ -1,0 +1,12 @@
+{
+  "id": "INT AUTO_INCREMENT",
+  "ip": "TINYTEXT",
+  "hostname": "TINYTEXT",
+  "peer": "TINYTEXT",
+  "status": "TINYTEXT",
+  "routing_table": "TINYTEXT",
+  "active": "INT",
+  "received": "INT",
+  "accepted": "INT",
+  "dump": "INT",
+}

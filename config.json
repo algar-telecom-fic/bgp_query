@@ -1,4 +1,7 @@
 {
   "ips_filepath": "/home/gardusi/documents/ips.json",
-  "credentials_filepath": "/home/gardusi/documents/credentials.json"
+  "credentials_filepath": "/home/gardusi/documents/credentials.json",
+  "database_name": "transport",
+  "table_name": "bgp",
+  "database_credentials_filepath": "/home/gardusi/github/database_credentials.json"
 }
