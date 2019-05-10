@@ -29,14 +29,25 @@ class User:
         self.get_peer,
         ip
       ])
+    ans = {}
     results = multi_threaded_execution(jobs)
     for ip, result in zip(ips, results):
-      print('ip: ' + ip + ', hostname: ' + ips[ip])
+      ans[ip] = {}
+      ans[ip]['hostname'] = ips[ip]
+      ans[ip]['peers'] = []
       if result == None:
         continue
+      flag = False
       for line in result:
-        print(line, end = '')
-      print()
+        v = line.strip().split(' ')
+        if flag == True and len(v) > 0 and v[0][0].isdigit() == True:
+          ans[ip]['peers'].append({
+            'peer': v[0],
+            'status': v[8]
+          })
+        elif len(v) > 0 and v[0] == 'Peer':
+          flag = True
+    print(ans)
 
   def remote_access_run(self, ip, command):
     for attempt in range(self.attempts):
