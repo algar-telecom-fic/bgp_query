@@ -6,6 +6,7 @@ import threading
 sys.path.append('/home/gardusi/github/sql_library/')
 from sql_json import mySQL
 
+date = datetime.datetime.now()
 lock = threading.Lock()
 
 class User:
@@ -120,6 +121,7 @@ def build_documents(ips):
           'received': ips[ip]['peers'][peer]['routes'][route]['received'],
           'accepted': ips[ip]['peers'][peer]['routes'][route]['accepted'],
           'dump': ips[ip]['peers'][peer]['routes'][route]['dump'],
+          'date': date,
         })
   return documents
 
