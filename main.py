@@ -53,10 +53,18 @@ class User:
                 status = bad_status
           ans[ip]['peers'].append({
             'peer': v[0],
-            'status': status
+            'status': status,
+            'routes': {}
           })
         elif flag == True:
-          print(v)
+          routes = v[1].split('/')
+          ans[ip]['peers']['routes'].append({
+            'routing_table': v[0][:-1],
+            'active': routes[0],
+            'received': routes[1],
+            'accepted': routes[2],
+            'dump': routes[3],
+          })
         elif len(v) > 0 and v[0] == 'Peer':
           flag = True
     return ans
