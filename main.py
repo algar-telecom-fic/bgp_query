@@ -40,8 +40,8 @@ class User:
       flag = False
       for line in result:
         v = list(filter(None, line.strip().split(' ')))
+        print(v)
         if flag == True and len(v) > 0 and v[0][0].isdigit() == True:
-          print(v)
           ans[ip]['peers'].append({
             'peer': v[0],
             'status': v[8]
