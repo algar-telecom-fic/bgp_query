@@ -10,7 +10,7 @@ from sql_json import mySQL
 date = datetime.datetime.now()
 current_filepath = os.path.realpath(
   os.path.join(os.getcwd(), os.path.dirname(__file__))
-)
+) + '/'
 lock = threading.Lock()
 
 class User:
