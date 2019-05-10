@@ -51,15 +51,14 @@ class User:
             for i in range(len(v) - 1, -1, -1):
               if v[i].find(bad_status) != -1:
                 status = bad_status
-          ans[ip]['peers'][v[0]] = {
+          peer = v[0]
+          ans[ip]['peers'][peer] = {
             'status': status,
             'routes': {}
           }
         elif flag == True:
           routes = v[1].split('/')
-          print(v)
-          print(routes)
-          ans[ip]['peers'][v[0]]['routes'][v[0][:-1]] = {
+          ans[ip]['peers'][peer]['routes'][v[0][:-1]] = {
             'active': routes[0],
             'received': routes[1],
             'accepted': routes[2],
