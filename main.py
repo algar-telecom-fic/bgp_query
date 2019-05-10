@@ -39,7 +39,7 @@ class User:
     for ip, result in zip(ips, results):
       ans[ip] = {}
       ans[ip]['hostname'] = ips[ip]
-      ans[ip]['peers'] = []
+      ans[ip]['peers'] = {}
       if result == None:
         continue
       flag = False
@@ -51,20 +51,18 @@ class User:
             for i in range(len(v) - 1, -1, -1):
               if v[i].find(bad_status) != -1:
                 status = bad_status
-          ans[ip]['peers'].append({
-            'peer': v[0],
+          ans[ip]['peers'][v[0]].append({
             'status': status,
             'routes': {}
           })
         elif flag == True:
           routes = v[1].split('/')
-          ans[ip]['peers']['routes'].append({
-            'routing_table': v[0][:-1],
+          ans[ip]['peers'][v[0]]['routes'][v[0][:-1]] = {
             'active': routes[0],
             'received': routes[1],
             'accepted': routes[2],
             'dump': routes[3],
-          })
+          }
         elif len(v) > 0 and v[0] == 'Peer':
           flag = True
     return ans
