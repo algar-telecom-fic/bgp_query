@@ -58,7 +58,7 @@ class User:
           })
         elif len(v) > 0 and v[0] == 'Peer':
           flag = True
-    print(ans)
+    return ans
 
   def remote_access_run(self, ip, command):
     for attempt in range(self.attempts):
@@ -99,7 +99,10 @@ def main():
   config = read_json('config.json')
   ips = read_json(config['ips_filepath'])
   user = User(config['credentials_filepath'])
-  user.get_peers(ips)
+  ips = user.get_peers(ips)
+  for ip in ips:
+    print('ip: ' + ip + ', hostname: ' + ips[ip]['hostname'])
+    print('peers: ' + str(ips[ip]['peers']))
 
 def multi_threaded_execution(jobs, workers = 256):
   ans = []
