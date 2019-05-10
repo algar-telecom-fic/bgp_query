@@ -37,7 +37,7 @@ class User:
       print()
 
   def remote_access_run(self, ip, command):
-    for attempt in xrange(self.attempts):
+    for attempt in range(self.attempts):
       with paramiko.SSHClient() as ssh:
         try:
           # paramiko.common.logging.basicConfig(level = paramiko.common.DEBUG)
