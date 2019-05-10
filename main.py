@@ -1,10 +1,10 @@
 from concurrent.futures import ThreadPoolExecutor
 import datetime
 import json
-from os import sys
+import os
 import paramiko
 import threading
-sys.path.append('/home/gardusi/github/sql_library/')
+os.sys.path.append('/home/gardusi/github/sql_library/')
 from sql_json import mySQL
 
 date = datetime.datetime.now()
@@ -101,8 +101,8 @@ class User:
           with lock:
             allowed = False
             s = str(exception)
-            print(ip, file = sys.stderr)
-            print(exception, file = sys.stderr)
+            print(ip, file = os.sys.stderr)
+            print(exception, file = os.sys.stderr)
             for error in self.allowed_errors:
               if s.find(error) != -1:
                 allowed = True
