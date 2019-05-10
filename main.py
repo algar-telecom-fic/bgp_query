@@ -45,7 +45,6 @@ class User:
       flag = False
       for line in result:
         v = list(filter(None, line.strip().split(' ')))
-        print(v)
         if flag == True and len(v) > 0 and v[0][0].isdigit() == True:
           status = 'Establ'
           for bad_status in self.not_established:
@@ -56,6 +55,8 @@ class User:
             'peer': v[0],
             'status': status
           })
+        elif flag == True:
+          print(v)
         elif len(v) > 0 and v[0] == 'Peer':
           flag = True
     return ans
