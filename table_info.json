@@ -8,5 +8,5 @@
   "active": "INT",
   "received": "INT",
   "accepted": "INT",
-  "dump": "INT",
+  "dump": "INT"
 }
