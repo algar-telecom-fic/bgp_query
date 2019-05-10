@@ -12,6 +12,11 @@ class User:
   ]
   attempts = 32
   timeout = 32
+  not_established = [
+    'Active',
+    'Connect',
+    'Idle',
+  ]
 
   def __init__(self, filepath):
     self.credentials = read_json(filepath)
@@ -42,9 +47,14 @@ class User:
         v = list(filter(None, line.strip().split(' ')))
         print(v)
         if flag == True and len(v) > 0 and v[0][0].isdigit() == True:
+          status = 'Establ'
+          for bad_status in self.not_established:
+            for i in range(len(v) - 1, -1, -1):
+              if v[i].find(bad_status) != -1:
+                status = bad_status
           ans[ip]['peers'].append({
             'peer': v[0],
-            'status': v[8]
+            'status': status
           })
         elif len(v) > 0 and v[0] == 'Peer':
           flag = True
