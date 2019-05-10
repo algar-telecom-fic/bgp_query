@@ -105,7 +105,7 @@ class User:
             if allowed == False:
               return None
 
-def build_database(ips):
+def build_documents(ips):
   documents = []
   for ip in ips:
     for peer in ips[ip]['peers']:
@@ -148,6 +148,7 @@ def main():
   database_name = config['database_name']
   table_name = config['table_name']
   table_info = read_json['table_info.json']
+  insert_documents(documents, database_credentials, database_name, table_name, table_info)
 
 def multi_threaded_execution(jobs, workers = 256):
   ans = []
