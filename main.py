@@ -57,6 +57,8 @@ class User:
           }
         elif flag == True:
           routes = v[1].split('/')
+          print(v)
+          print(routes)
           ans[ip]['peers'][v[0]]['routes'][v[0][:-1]] = {
             'active': routes[0],
             'received': routes[1],
