@@ -19,7 +19,8 @@ class User:
   ]
   attempts = 32
   timeout = 32
-  not_established = [
+  status = [
+    'Establ',
     'Active',
     'Connect',
     'Idle',
@@ -53,16 +54,17 @@ class User:
       for line in result:
         v = list(filter(None, line.strip().split(' ')))
         if flag == True and len(v) > 0 and v[0][0].isdigit() == True:
-          status = 'Establ'
-          for bad_status in self.not_established:
-            for i in range(len(v) - 1, -1, -1):
-              if v[i].find(bad_status) != -1:
-                status = bad_status
-          peer = v[0]
-          ans[ip]['peers'][peer] = {
-            'status': status,
-            'routes': {}
-          }
+          for i in range(len(v) - 1, -1, -1):
+            for current_status in self.status:  
+              if v[i].find(current_status) != -1:
+                peer = v[0]
+                ans[ip]['peers'][peer] = {
+                  'routes': {},
+                  'status': current_status,
+                  'up_down': v[i - 1],
+                  'last': v[i - 2],
+                }
+                break
         elif flag == True:
           routes = v[1].split('/')
           ans[ip]['peers'][peer]['routes'][v[0][:-1]] = {
