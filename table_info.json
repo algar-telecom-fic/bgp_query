@@ -9,5 +9,7 @@
   "received": "INT",
   "accepted": "INT",
   "dump": "INT",
-  "date": "DATETIME"
+  "date": "DATETIME",
+  'up_down': "TINYTEXT",
+  'last': "TINYTEXT"
 }

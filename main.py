@@ -118,6 +118,8 @@ def build_documents(ips):
     for peer in ips[ip]['peers']:
       for route in ips[ip]['peers'][peer]['routes']:
         documents.append({
+          'up_down': ans[ip]['peers'][peer]['up_down'],
+          'last': ans[ip]['peers'][peer]['last'],
           'ip': ip,
           'hostname': ips[ip]['hostname'],
           'peer': peer,
