@@ -10,6 +10,6 @@
   "accepted": "INT",
   "dump": "INT",
   "date": "DATETIME",
-  'up_down': "TINYTEXT",
-  'last': "TINYTEXT"
+  "up_down": "TINYTEXT",
+  "last": "TINYTEXT"
 }
