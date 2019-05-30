@@ -28,6 +28,27 @@ class User:
 
   def __init__(self, filepath):
     self.credentials = read_json(filepath)
+    
+  def build_documents(ips):
+    documents = []
+    for ip in ips:
+      for peer in ips[ip]['peers']:
+        for route in ips[ip]['peers'][peer]['routes']:
+          documents.append({
+            'up_down': ips[ip]['peers'][peer]['up_down'],
+            'last': ips[ip]['peers'][peer]['last'],
+            'ip': ip,
+            'hostname': ips[ip]['hostname'],
+            'peer': peer,
+            'status': ips[ip]['peers'][peer]['status'],
+            'routing_table': route,
+            'active': ips[ip]['peers'][peer]['routes'][route]['active'],
+            'received': ips[ip]['peers'][peer]['routes'][route]['received'],
+            'accepted': ips[ip]['peers'][peer]['routes'][route]['accepted'],
+            'dump': ips[ip]['peers'][peer]['routes'][route]['dump'],
+            'date': date,
+          })
+    return documents
 
   def get_peer(self, ip):
     return self.remote_access_run(
@@ -42,12 +63,12 @@ class User:
         self.get_peer,
         ip
       ])
-    ans = {}
+    self.ips = {}
     results = multi_threaded_execution(jobs)
     for ip, result in zip(ips, results):
-      ans[ip] = {}
-      ans[ip]['hostname'] = ips[ip]
-      ans[ip]['peers'] = {}
+      self.ips[ip] = {}
+      self.ips[ip]['hostname'] = ips[ip]
+      self.ips[ip]['peers'] = {}
       if result == None:
         continue
       flag = False
@@ -58,7 +79,7 @@ class User:
             for current_status in self.status:  
               if v[i].find(current_status) != -1:
                 peer = v[0]
-                ans[ip]['peers'][peer] = {
+                self.ips[ip]['peers'][peer] = {
                   'routes': {},
                   'status': current_status,
                   'up_down': v[i - 1],
@@ -67,7 +88,7 @@ class User:
                 break
         elif flag == True:
           routes = v[1].split('/')
-          ans[ip]['peers'][peer]['routes'][v[0][:-1]] = {
+          self.ips[ip]['peers'][peer]['routes'][v[0][:-1]] = {
             'active': routes[0],
             'received': routes[1],
             'accepted': routes[2],
@@ -75,7 +96,7 @@ class User:
           }
         elif len(v) > 0 and v[0] == 'Peer':
           flag = True
-    return ans
+    return self.ips
 
   def remote_access_run(self, ip, command):
     for attempt in range(self.attempts):
@@ -112,27 +133,6 @@ class User:
             if allowed == False:
               return None
 
-def build_documents(ips):
-  documents = []
-  for ip in ips:
-    for peer in ips[ip]['peers']:
-      for route in ips[ip]['peers'][peer]['routes']:
-        documents.append({
-          'up_down': ips[ip]['peers'][peer]['up_down'],
-          'last': ips[ip]['peers'][peer]['last'],
-          'ip': ip,
-          'hostname': ips[ip]['hostname'],
-          'peer': peer,
-          'status': ips[ip]['peers'][peer]['status'],
-          'routing_table': route,
-          'active': ips[ip]['peers'][peer]['routes'][route]['active'],
-          'received': ips[ip]['peers'][peer]['routes'][route]['received'],
-          'accepted': ips[ip]['peers'][peer]['routes'][route]['accepted'],
-          'dump': ips[ip]['peers'][peer]['routes'][route]['dump'],
-          'date': date,
-        })
-  return documents
-
 def insert_documents(documents, database_credentials, database_name, table_name, table_info):
   db = mySQL(
     database_credentials = database_credentials,
@@ -152,13 +152,15 @@ def main():
   config = read_json(current_filepath + 'config.json')
   ips = read_json(config['ips_filepath'])
   user = User(config['credentials_filepath'])
-  ips = user.get_peers(ips)
-  documents = build_documents(ips)
-  database_credentials = read_json(config['database_credentials_filepath'])
-  database_name = config['database_name']
-  table_name = config['table_name']
-  table_info = read_json(current_filepath + 'table_info.json')
-  insert_documents(documents, database_credentials, database_name, table_name, table_info)
+  user.get_peers(ips)
+  user.get_groups()
+  insert_documents(
+    user.build_documents(), 
+    read_json(config['database_credentials_filepath']), 
+    config['database_name'], 
+    config['table_name'], 
+    read_json(current_filepath + 'table_info.json')
+  )
 
 def multi_threaded_execution(jobs, workers = 256):
   ans = []
