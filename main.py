@@ -46,6 +46,9 @@ class User:
             'received': self.ips[ip]['peers'][peer]['routes'][route]['received'],
             'accepted': self.ips[ip]['peers'][peer]['routes'][route]['accepted'],
             'dump': self.ips[ip]['peers'][peer]['routes'][route]['dump'],
+            'as': self.ips[ip]['peers'][peer]['as'],
+            'contact': '?',
+            'threshold': '?',
             'date': date,
           })
     return documents
@@ -74,7 +77,6 @@ class User:
       flag = False
       for line in result:
         v = list(filter(None, line.strip().split(' ')))
-        print(v)
         if len(v) == 0:
           continue
         if v[0][0].isdigit() == True:
@@ -87,6 +89,7 @@ class User:
                   'status': current_status,
                   'up_down': v[i - 1],
                   'last': v[i - 2],
+                  'as': v[1],
                 }
                 if current_status == 'Establ':
                   flag = True

@@ -11,5 +11,8 @@
   "dump": "INT",
   "date": "DATETIME",
   "up_down": "TINYTEXT",
-  "last": "TINYTEXT"
+  "last": "TINYTEXT",
+  "as": "TINYTEXT",
+  "contact" "TINYTEXT",
+  "threshold": "TINYTEXT"
 }
