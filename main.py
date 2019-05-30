@@ -153,7 +153,7 @@ def main():
   ips = read_json(config['ips_filepath'])
   user = User(config['credentials_filepath'])
   user.get_peers(ips)
-  user.get_groups()
+  # ~ user.get_groups()
   insert_documents(
     user.build_documents(), 
     read_json(config['database_credentials_filepath']), 
