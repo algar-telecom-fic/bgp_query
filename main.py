@@ -71,15 +71,13 @@ class User:
       self.ips[ip]['peers'] = {}
       if result == None:
         continue
-      flag = False
       for line in result:
         v = list(filter(None, line.strip().split(' ')))
-        print(v)
-        if flag == True and len(v) > 0 and v[0][0].isdigit() == True:
+        if len(v) == 0:
+          continue
+        if v[0][0].isdigit() == True:
           for i in range(len(v) - 1, -1, -1):
-            print(v[i])
             for current_status in self.status:
-              print(current_status)
               if v[i].find(current_status) != -1:
                 peer = v[0]
                 self.ips[ip]['peers'][peer] = {
@@ -88,7 +86,15 @@ class User:
                   'up_down': v[i - 1],
                   'last': v[i - 2],
                 }
-        elif flag == True:
+                if current_status != 'Establ':
+                  self.ips[ip]['peers'][peer]['routes']['?'] = {
+                    'active': 0,
+                    'received': 0,
+                    'accepted': 0,
+                    'dump': 0,
+                  }
+                break
+        else:
           routes = v[1].split('/')
           self.ips[ip]['peers'][peer]['routes'][v[0][:-1]] = {
             'active': routes[0],
@@ -96,9 +102,6 @@ class User:
             'accepted': routes[2],
             'dump': routes[3],
           }
-        elif len(v) > 0 and v[0] == 'Peer':
-          flag = True
-    return self.ips
 
   def remote_access_run(self, ip, command):
     for attempt in range(self.attempts):
