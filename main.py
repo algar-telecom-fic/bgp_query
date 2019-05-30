@@ -28,7 +28,7 @@ class User:
 
   def __init__(self, filepath):
     self.credentials = read_json(filepath)
-    
+
   def build_documents(self):
     documents = []
     for ip in self.ips:
@@ -74,9 +74,12 @@ class User:
       flag = False
       for line in result:
         v = list(filter(None, line.strip().split(' ')))
+        print(v)
         if flag == True and len(v) > 0 and v[0][0].isdigit() == True:
           for i in range(len(v) - 1, -1, -1):
-            for current_status in self.status:  
+            print(v[i])
+            for current_status in self.status:
+              print(current_status)
               if v[i].find(current_status) != -1:
                 peer = v[0]
                 self.ips[ip]['peers'][peer] = {
@@ -85,7 +88,6 @@ class User:
                   'up_down': v[i - 1],
                   'last': v[i - 2],
                 }
-                break
         elif flag == True:
           routes = v[1].split('/')
           self.ips[ip]['peers'][peer]['routes'][v[0][:-1]] = {
@@ -155,10 +157,10 @@ def main():
   user.get_peers(ips)
   # ~ user.get_groups()
   insert_documents(
-    user.build_documents(), 
-    read_json(config['database_credentials_filepath']), 
-    config['database_name'], 
-    config['table_name'], 
+    user.build_documents(),
+    read_json(config['database_credentials_filepath']),
+    config['database_name'],
+    config['table_name'],
     read_json(current_filepath + 'table_info.json')
   )
 
