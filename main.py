@@ -29,7 +29,7 @@ class User:
   def __init__(self, filepath):
     self.credentials = read_json(filepath)
     
-  def build_documents(ips):
+  def build_documents(self, ips):
     documents = []
     for ip in ips:
       for peer in ips[ip]['peers']:
