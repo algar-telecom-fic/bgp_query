@@ -13,6 +13,6 @@
   "up_down": "TINYTEXT",
   "last": "TINYTEXT",
   "as": "TINYTEXT",
-  "contact" "TINYTEXT",
+  "contact": "TINYTEXT",
   "threshold": "TINYTEXT"
 }
