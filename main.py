@@ -29,23 +29,23 @@ class User:
   def __init__(self, filepath):
     self.credentials = read_json(filepath)
     
-  def build_documents(self, ips):
+  def build_documents(self):
     documents = []
-    for ip in ips:
-      for peer in ips[ip]['peers']:
-        for route in ips[ip]['peers'][peer]['routes']:
+    for ip in self.ips:
+      for peer in self.ips[ip]['peers']:
+        for route in self.ips[ip]['peers'][peer]['routes']:
           documents.append({
-            'up_down': ips[ip]['peers'][peer]['up_down'],
-            'last': ips[ip]['peers'][peer]['last'],
+            'up_down': self.ips[ip]['peers'][peer]['up_down'],
+            'last': self.ips[ip]['peers'][peer]['last'],
             'ip': ip,
-            'hostname': ips[ip]['hostname'],
+            'hostname': self.ips[ip]['hostname'],
             'peer': peer,
-            'status': ips[ip]['peers'][peer]['status'],
+            'status': self.ips[ip]['peers'][peer]['status'],
             'routing_table': route,
-            'active': ips[ip]['peers'][peer]['routes'][route]['active'],
-            'received': ips[ip]['peers'][peer]['routes'][route]['received'],
-            'accepted': ips[ip]['peers'][peer]['routes'][route]['accepted'],
-            'dump': ips[ip]['peers'][peer]['routes'][route]['dump'],
+            'active': self.ips[ip]['peers'][peer]['routes'][route]['active'],
+            'received': self.ips[ip]['peers'][peer]['routes'][route]['received'],
+            'accepted': self.ips[ip]['peers'][peer]['routes'][route]['accepted'],
+            'dump': self.ips[ip]['peers'][peer]['routes'][route]['dump'],
             'date': date,
           })
     return documents
