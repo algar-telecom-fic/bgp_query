@@ -71,6 +71,7 @@ class User:
       self.ips[ip]['peers'] = {}
       if result == None:
         continue
+      flag = False
       for line in result:
         v = list(filter(None, line.strip().split(' ')))
         print(v)
@@ -87,7 +88,9 @@ class User:
                   'up_down': v[i - 1],
                   'last': v[i - 2],
                 }
-                if current_status != 'Establ':
+                if current_status == 'Establ':
+                  flag = True
+                else:
                   self.ips[ip]['peers'][peer]['routes']['?'] = {
                     'active': 0,
                     'received': 0,
@@ -95,7 +98,7 @@ class User:
                     'dump': 0,
                   }
                 break
-        else:
+        elif flag == True:
           routes = v[1].split('/')
           self.ips[ip]['peers'][peer]['routes'][v[0][:-1]] = {
             'active': routes[0],
