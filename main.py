@@ -73,6 +73,7 @@ class User:
         continue
       for line in result:
         v = list(filter(None, line.strip().split(' ')))
+        print(v)
         if len(v) == 0:
           continue
         if v[0][0].isdigit() == True:
