@@ -139,6 +139,8 @@ class User:
           stdin = channel.makefile('wb')
           stdout = channel.makefile('rb')
           for command in commands:
+            with lock:
+              print('ip: ' + ip + ', command: ' + command)
             stdin.write(command + '\n')
           print(stdout.read())
           ans = []
