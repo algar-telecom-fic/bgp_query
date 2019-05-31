@@ -53,13 +53,15 @@ class User:
           })
     return documents
     
-  # ~ def get_neighbor(self, ip, peer):
-    # ~ return self.remote_access_run(
-      # ~ ip,
-      # ~ [
-        # ~ 'show bgp neighbour' + ' ' + str(peer)
-      # ~ ]
-    # ~ )
+  def get_neighbors(self):
+    for ip in self.ips:
+      commands = []
+      for peer in self.ips[ip]['peers']:
+        commands.append('show bgp neighbour' + ' ' + str(peer))
+      output = self.remote_access_run(ip, commands)
+      for line in output:
+        print(line)
+      # ~ self.ips[ip]['peers']
 
   def get_peer(self, ip):
     return self.remote_access_run(
@@ -94,7 +96,6 @@ class User:
             for current_status in self.status:
               if v[i].find(current_status) != -1:
                 peer = v[0]
-                # ~ neighbor_info = self.get_neighbors(ip, peer)
                 self.ips[ip]['peers'][peer] = {
                   'routes': {},
                   'status': current_status,
@@ -180,7 +181,7 @@ def main():
   ips = read_json(config['ips_filepath'])
   user = User(config['credentials_filepath'])
   user.get_peers(ips)
-  # ~ user.get_groups()
+  user.get_neighbors()
   insert_documents(
     user.build_documents(),
     read_json(config['database_credentials_filepath']),
