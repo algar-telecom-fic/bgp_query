@@ -135,17 +135,15 @@ class User:
             banner_timeout = self.timeout,
             timeout = self.timeout,
           )
-          channel = ssh.invoke_shell()
-          stdin = channel.makefile('wb')
-          stdout = channel.makefile('rb')
-          for command in commands:
-            with lock:
-              print('ip: ' + ip + ', command: ' + command)
-            stdin.write(command + '\n')
-          print(stdout.read())
           ans = []
-          for line in stdout.readlines():
-            ans.append(line)
+          for command in commands:
+            with ssh.invoke_shell() as channel:
+              stdin, stdout, stderr = ssh.exec_command(
+                command,
+                timeout = self.timeout,
+              )
+            for line in stdout.readlines():
+              ans.append(line)
           return ans
         except Exception as exception:
           with lock:
