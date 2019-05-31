@@ -94,7 +94,7 @@ class User:
             for current_status in self.status:
               if v[i].find(current_status) != -1:
                 peer = v[0]
-                neighbor_info = self.get_neighbors(ip, peer)
+                # ~ neighbor_info = self.get_neighbors(ip, peer)
                 self.ips[ip]['peers'][peer] = {
                   'routes': {},
                   'status': current_status,
