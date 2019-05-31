@@ -57,7 +57,7 @@ class User:
     for ip in self.ips:
       commands = []
       for peer in self.ips[ip]['peers']:
-        commands.append('show bgp neighbour' + ' ' + str(peer))
+        commands.append('show bgp neighbor' + ' ' + str(peer))
       output = self.remote_access_run(ip, commands)
       for line in output:
         print(line)
