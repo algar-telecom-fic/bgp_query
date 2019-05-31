@@ -137,6 +137,8 @@ class User:
           )
           ans = []
           for command in commands:
+            with lock:
+              print('ip: ' + str(ip) + ', command: ' + command)
             with ssh.invoke_shell() as channel:
               stdin, stdout, stderr = ssh.exec_command(
                 command,
