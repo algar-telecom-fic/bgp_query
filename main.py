@@ -78,7 +78,7 @@ class User:
             current_line += 1
           elif line.find('Description: ') != -1:
             self.ips[ip]['peers'][current_peer]['description'] = line.strip()
-          elif line.find('Group: ') != -1
+          elif line.find('Group: ') != -1:
             self.ips[ip]['peers'][current_peer]['group'] = line.strip()
 
   def get_peer(self, ip):
