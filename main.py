@@ -52,11 +52,21 @@ class User:
             'date': date,
           })
     return documents
+    
+  # ~ def get_neighbor(self, ip, peer):
+    # ~ return self.remote_access_run(
+      # ~ ip,
+      # ~ [
+        # ~ 'show bgp neighbour' + ' ' + str(peer)
+      # ~ ]
+    # ~ )
 
   def get_peer(self, ip):
     return self.remote_access_run(
       ip,
-      'show bgp summary'
+      [
+        'show bgp summary'
+      ]
     )
 
   def get_peers(self, ips):
@@ -84,6 +94,7 @@ class User:
             for current_status in self.status:
               if v[i].find(current_status) != -1:
                 peer = v[0]
+                neighbor_info = self.get_neighbors(ip, peer)
                 self.ips[ip]['peers'][peer] = {
                   'routes': {},
                   'status': current_status,
@@ -110,7 +121,7 @@ class User:
             'dump': routes[3],
           }
 
-  def remote_access_run(self, ip, command):
+  def remote_access_run(self, ip, commands):
     for attempt in range(self.attempts):
       with paramiko.SSHClient() as ssh:
         try:
@@ -124,10 +135,12 @@ class User:
             banner_timeout = self.timeout,
             timeout = self.timeout,
           )
-          stdin, stdout, stderr = ssh.exec_command(
-            command,
-            timeout = self.timeout,
-          )
+          channel = ssh.invoke_shell()
+          stdin = channel.makefile('wb')
+          stdout = channel.makefile('rb')
+          for command in commands:
+            stdin.write(command + '\n')
+          print(stdout.read())
           ans = []
           for line in stdout.readlines():
             ans.append(line)
