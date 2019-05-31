@@ -53,15 +53,33 @@ class User:
           })
     return documents
     
+  def get_neighbor(self, ip):
+    commands = []
+    for peer in self.ips[ip]['peers']:
+      commands.append('show bgp neighbor' + ' ' + str(peer))
+    return self.remote_access_run(ip, commands)
+
   def get_neighbors(self):
+    jobs = []
     for ip in self.ips:
-      commands = []
-      for peer in self.ips[ip]['peers']:
-        commands.append('show bgp neighbor' + ' ' + str(peer))
-      output = self.remote_access_run(ip, commands)
-      for line in output:
-        print(line)
-      # ~ self.ips[ip]['peers']
+      jobs.append([
+        self.get_neighbor,
+        ip
+      ])
+    results = multi_threaded_execution(jobs)
+    for ip, result in zip(self.ips, results):
+      if result == None:
+        continue
+      current_peer = -1
+      peers = list(self.ips[ip]['peers'].keys())
+      for line in result:
+        while current_peer < len(peers):
+          if line.find('Peer:') != -1:
+            current_line += 1
+          elif line.find('Description: ') != -1:
+            self.ips[ip]['peers'][current_peer]['description'] = line.strip()
+          elif line.find('Group: ') != -1
+            self.ips[ip]['peers'][current_peer]['group'] = line.strip()
 
   def get_peer(self, ip):
     return self.remote_access_run(
@@ -138,8 +156,6 @@ class User:
           )
           ans = []
           for command in commands:
-            with lock:
-              print('ip: ' + str(ip) + ', command: ' + command)
             with ssh.invoke_shell() as channel:
               stdin, stdout, stderr = ssh.exec_command(
                 command,
