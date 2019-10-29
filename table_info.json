@@ -14,5 +14,7 @@
   "last": "TINYTEXT",
   "as": "TINYTEXT",
   "contact": "TINYTEXT",
-  "threshold": "TINYTEXT"
+  "threshold": "TINYTEXT",
+  "group": "TINYTEXT",
+  "description": "TINYTEXT"
 }

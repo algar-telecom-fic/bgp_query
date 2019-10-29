@@ -34,25 +34,34 @@ class User:
     for ip in self.ips:
       for peer in self.ips[ip]['peers']:
         for route in self.ips[ip]['peers'][peer]['routes']:
-          documents.append({
-            'up_down': self.ips[ip]['peers'][peer]['up_down'],
-            'last': self.ips[ip]['peers'][peer]['last'],
-            'ip': ip,
-            'hostname': self.ips[ip]['hostname'],
-            'peer': peer,
-            'status': self.ips[ip]['peers'][peer]['status'],
-            'routing_table': route,
-            'active': self.ips[ip]['peers'][peer]['routes'][route]['active'],
-            'received': self.ips[ip]['peers'][peer]['routes'][route]['received'],
-            'accepted': self.ips[ip]['peers'][peer]['routes'][route]['accepted'],
-            'dump': self.ips[ip]['peers'][peer]['routes'][route]['dump'],
-            'as': self.ips[ip]['peers'][peer]['as'],
-            'contact': '?',
-            'threshold': '?',
-            'date': date,
-          })
+          try:
+              documents.append({
+                'up_down': self.ips[ip]['peers'][peer]['up_down'],
+                'last': self.ips[ip]['peers'][peer]['last'],
+                'ip': ip,
+                'hostname': self.ips[ip]['hostname'],
+                'peer': peer,
+                'status': self.ips[ip]['peers'][peer]['status'],
+                'routing_table': route,
+                'active': self.ips[ip]['peers'][peer]['routes'][route]['active'],
+                'received': self.ips[ip]['peers'][peer]['routes'][route]['received'],
+                'accepted': self.ips[ip]['peers'][peer]['routes'][route]['accepted'],
+                'dump': self.ips[ip]['peers'][peer]['routes'][route]['dump'],
+                'as': self.ips[ip]['peers'][peer]['as'],
+                'contact': '?',
+                'threshold': '?',
+                'date': date,
+                'group': self.ips[ip]['peers'][peer]['group'],
+                'description': self.ips[ip]['peers'][peer]['description']
+              })
+          except Exception as e:
+              print(f"excecao: {e}")
+              print(f"ip: {ip}")
+              print(f"peer: {peer}")
+              print(self.ips[ip]['peers'])
+
     return documents
-    
+
   def get_neighbor(self, ip):
     commands = []
     for peer in self.ips[ip]['peers']:
@@ -67,19 +76,42 @@ class User:
         ip
       ])
     results = multi_threaded_execution(jobs)
+    # for ip, result in zip(self.ips, results):
+    #     print("esse eh um ip: ------------")
+    #     print(ip)
+    #     print("esse eh um result:  -------")
+    #     print(result)
     for ip, result in zip(self.ips, results):
       if result == None:
         continue
       current_peer = -1
       peers = list(self.ips[ip]['peers'].keys())
+      print("esse sao os peers: ----------------------------------------")
+      print(f"meu ip: {ip}")
+      print(peers)
       for line in result:
-        while current_peer < len(peers):
-          if line.find('Peer:') != -1:
-            current_line += 1
-          elif line.find('Description: ') != -1:
-            self.ips[ip]['peers'][current_peer]['description'] = line.strip()
-          elif line.find('Group: ') != -1:
-            self.ips[ip]['peers'][current_peer]['group'] = line.strip()
+        print(line)
+        if line.find('Peer:') != -1:
+          current_peer += 1
+          if current_peer < len(peers):
+            self.ips[ip]['peers'][peers[current_peer]]['description'] = '???'
+            self.ips[ip]['peers'][peers[current_peer]]['group'] = '???'
+            print(f"defini {peers[current_peer]} com a description = ???")
+            print(f"defini {peers[current_peer]} com o group = ???")
+          else:
+            break
+
+        elif line.find('Description: ') != -1:
+          print(f"defini {peers[current_peer]} com a description = {line.strip()}")
+          self.ips[ip]['peers'][peers[current_peer]]['description'] = line.strip()[13:]
+
+        elif line.find('Group: ') != -1:
+          print(f"defini {peers[current_peer]} com o group = {line.strip()}")
+          self.ips[ip]['peers'][peers[current_peer]]['group'] = line.strip()[7:]
+
+
+
+
 
   def get_peer(self, ip):
     return self.remote_access_run(
