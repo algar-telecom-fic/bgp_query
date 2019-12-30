@@ -9,12 +9,13 @@
   "received": "INT",
   "accepted": "INT",
   "dump": "INT",
+  "advertised": "INT",
   "date": "DATETIME",
-  "up_down": "TINYTEXT",
-  "last": "TINYTEXT",
+  "last_up_down": "TINYTEXT",
   "as": "TINYTEXT",
   "contact": "TINYTEXT",
   "threshold": "TINYTEXT",
   "group": "TINYTEXT",
-  "description": "TINYTEXT"
+  "description": "TINYTEXT",
+  "max_prefix": "INT"
 }
